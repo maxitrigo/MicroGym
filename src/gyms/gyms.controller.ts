@@ -3,14 +3,21 @@ import { GymsService } from './gyms.service';
 import { CreateGymDto } from './dto/create-gym.dto';
 import { UpdateGymDto } from './dto/update-gym.dto';
 import { AdminGuard } from 'src/guards/admin.guard';
+import { Headers } from '@nestjs/common';
+import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('gyms')
 export class GymsController {
   constructor(private readonly gymsService: GymsService) {}
 
   @Post()
-  create(@Body() createGymDto: CreateGymDto) {
-    return this.gymsService.create(createGymDto);
+  @ApiResponse({ status: 200, description: 'The gym has been successfully created.' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiBearerAuth()
+  create(@Body() createGymDto: CreateGymDto, @Headers('authorization') authHeader: string ) {
+    const token = authHeader.split(' ')[1];
+    return this.gymsService.create(token, createGymDto);
   }
 
   @Get()
@@ -20,7 +27,7 @@ export class GymsController {
   }
 
   @Get(':slug')
-  @UseGuards(AdminGuard)
+  @UseGuards(AuthGuard)
   findOne(@Param('slug') slug: string) {
     return this.gymsService.findBySlug(slug);
   }
@@ -33,7 +40,8 @@ export class GymsController {
 
   @Delete(':id')
   @UseGuards(AdminGuard)
-  remove(@Param('id') id: string) {
-    return this.gymsService.remove(id);
+  remove(@Param('id') id: string, @Headers('authorization') authHeader: string) {
+    const token = authHeader.split(' ')[1];
+    return this.gymsService.remove(id, token);
   }
 }

@@ -6,34 +6,55 @@ export class Gym {
     @PrimaryGeneratedColumn('uuid')
     id: string = uuidv4();
 
-    @Column()
+    @Column({
+        nullable: false,
+    })
     name: string;
 
-    @Column()
+    @Column({
+        nullable: false,
+    })
     address: string;
 
-    @Column()
+    @Column({
+        nullable: false,
+    })
     phone: string;
 
-    @Column()
+    @Column({
+        nullable: false,
+    })
     email: string;
 
-    @Column()
+    @Column({
+        nullable: false,
+    })
     owner: string;
 
-    @Column()
+    @Column({
+        unique:true,
+        nullable: false,
+    })
     slug: string;
 
-    @Column()
+    @Column({
+        nullable: true
+    })
     image: string;
 
-    @Column()
+    @Column({
+        nullable: true
+    })
     description: string;
 
-    @Column()
+    @Column({
+        nullable: true
+    })
     openHours: string;
 
-    @Column()
+    @Column({
+        nullable: true
+    })
     closeHours: string;
 
 }

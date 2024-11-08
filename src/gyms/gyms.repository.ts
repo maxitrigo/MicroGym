@@ -23,7 +23,9 @@ export class GymsRepository {
         return await this.gymsRepository.findOneBy({ slug });
     }
 
-    async create(gym: CreateGymDto): Promise<Gym> {
+    async create(owner: string, gym: CreateGymDto): Promise<Gym> {
+        await this.gymsRepository.create(gym);
+        gym.owner = owner;
         return await this.gymsRepository.save(gym);
     }
 
