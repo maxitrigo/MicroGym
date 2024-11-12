@@ -4,6 +4,8 @@ import { GymsModule } from './gyms/gyms.module';
 import { DatabaseModule } from './database/database.module';
 import { JwtModule } from '@nestjs/jwt';
 import { JWT_SECRET } from './config/env.config';
+import { UsersModule } from './users/users.module';
+import { CommunicationsModule } from './communications/communications.module';
 
 @Module({
   imports: [
@@ -14,6 +16,8 @@ import { JWT_SECRET } from './config/env.config';
       global: true, 
       secret: JWT_SECRET, 
       signOptions: { expiresIn: '1h' } }),
+    UsersModule,
+    CommunicationsModule,
   ],
   controllers: [],
   providers: [],

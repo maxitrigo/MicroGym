@@ -26,4 +26,10 @@ export class UpdateGymDto extends PartialType(CreateGymDto) {
 
     @ApiProperty({ example: '20:00' })
     closeHours?: string;
+
+    @ApiProperty({ example: '100' })
+    capacity?: number;
+
+    @ApiProperty({ example: '82474-234709-82374239-8234' })
+    mercadoPago?: string
 }

@@ -32,6 +32,13 @@ export class GymsController {
     return this.gymsService.findBySlug(slug);
   }
 
+  @Get(':gymId/users')
+  @UseGuards(AdminGuard)
+  findUsersByGymId(@Param('gymId') gymId: string, @Headers('authorization') authHeader: string) {
+    const token = authHeader.split(' ')[1];
+    return this.gymsService.findUsersByGymId(gymId, token);
+  }
+
   @Patch(':id')
   @UseGuards(AdminGuard)
   update(@Param('id') id: string, @Body() updateGymDto: UpdateGymDto) {

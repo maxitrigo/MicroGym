@@ -75,6 +75,21 @@ export class GymsService {
     }
   }
 
+  async findUsersByGymId(gymId: string, token: string) {
+    const decoded = this.jwtService.decode(token);
+    const owner = decoded.id
+    const gymOwner = await this.gymsRepository.findById(gymId);
+    if (gymOwner.owner !== owner) {
+      throw new BadRequestException('You are not the owner of this gym');
+    }
+    try{
+      const gym = await this.gymsRepository.findUsersByGymId(gymId);
+      return gym ? gym.users : [];
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async update(id: string, updateGymDto: UpdateGymDto) {
     try{
       const gym = await this.gymsRepository.findById(id);

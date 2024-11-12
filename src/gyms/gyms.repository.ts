@@ -23,6 +23,10 @@ export class GymsRepository {
         return await this.gymsRepository.findOneBy({ slug });
     }
 
+    async findUsersByGymId(gymId: string): Promise<Gym> {
+        return await this.gymsRepository.findOne({ where: { id: gymId }, relations: ['users'] });
+    }
+
     async create(owner: string, gym: CreateGymDto): Promise<Gym> {
         await this.gymsRepository.create(gym);
         gym.owner = owner;
