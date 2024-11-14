@@ -12,8 +12,8 @@ export class UsersController {
   @UseGuards(AuthGuard)
   create(@Body() body, @Headers('authorization') authHeader: string ) {
     const token = authHeader.split(' ')[1];
-    const gymId = body.gymId;
-    return this.usersService.create(gymId, token);
+    const gymToken = body.gymToken;
+    return this.usersService.create(gymToken, token);
   }
 
   @Get('user')

@@ -11,5 +11,6 @@ import { CommunicationsRepository } from './communications.repository';
   imports: [TypeOrmModule.forFeature([Communication]), ScheduleModule.forRoot(), GymsModule ],
   controllers: [CommunicationsController],
   providers: [CommunicationsService, CommunicationsRepository],
+  exports: [CommunicationsService],
 })
 export class CommunicationsModule {}

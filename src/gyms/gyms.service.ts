@@ -7,6 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Roles } from 'src/Roles/roles.enum';
 import { JWT_SECRET } from 'src/config/env.config';
 import { UsersService } from 'src/users/users.service';
+import e from 'express';
 
 @Injectable()
 export class GymsService {
@@ -73,21 +74,39 @@ export class GymsService {
 
   async findBySlug(slug: string) {
     try{
-      return await this.gymsRepository.findBySlug(slug);
+      const gym = await this.gymsRepository.findBySlug(slug);
+      const gymToken = this.jwtService.sign({
+        id: gym.id,
+        mercadopago: gym.mercadoPago,
+      }, {secret: JWT_SECRET})
+      return { 
+        name: gym.name,
+        email: gym.email,
+        address: gym.address,
+        phone: gym.phone,
+        slug: gym.slug,
+        image: gym.image,
+        openHours: gym.openHours,
+        closeHours: gym.closeHours,
+        description: gym.description,
+        owner: gym.owner, 
+        gymToken: gymToken 
+      };
     } catch (error) {
       console.log(error);
     }
   }
 
-  async findUsersByGymId(gymId: string, token: string) {
-    const decoded = this.jwtService.decode(token);
-    const owner = decoded.id
-    const gymOwner = await this.gymsRepository.findById(gymId);
+  async findUsersByGymId(gymToken: string, token: string) {
+    const decodedUser = this.jwtService.decode(token);
+    const owner = decodedUser.id
+    const decodedGym = this.jwtService.decode(gymToken);
+    const gymOwner = await this.gymsRepository.findById(decodedGym.gymId);
     if (gymOwner.owner !== owner) {
       throw new BadRequestException('You are not the owner of this gym');
     }
     try{
-      const gym = await this.gymsRepository.findUsersByGymId(gymId);
+      const gym = await this.gymsRepository.findUsersByGymId(decodedGym.gymId);
       return gym ? gym.users : [];
     } catch (error) {
       console.log(error);

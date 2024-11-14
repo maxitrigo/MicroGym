@@ -31,11 +31,11 @@ export class GymsController {
     return this.gymsService.findBySlug(slug);
   }
 
-  @Get(':gymId/users')
+  @Get(':gymToken/users')
   @UseGuards(AdminGuard)
-  findUsersByGymId(@Param('gymId') gymId: string, @Headers('authorization') authHeader: string) {
+  findUsersByGymId(@Param('gymToken') gymToken: string, @Headers('authorization') authHeader: string) {
     const token = authHeader.split(' ')[1];
-    return this.gymsService.findUsersByGymId(gymId, token);
+    return this.gymsService.findUsersByGymId(gymToken, token);
   }
 
   @Patch(':id')

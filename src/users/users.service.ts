@@ -12,9 +12,10 @@ export class UsersService {
     private readonly jwtService: JwtService
   ) {}
 
-  async create(gymId: string, token: string) {
-    const decoded = this.jwtService.decode(token);
-    const user = await this.usersRepository.create(decoded.id, decoded.name, gymId);
+  async create(gymToken: string, token: string) {
+    const decodedUser = this.jwtService.decode(token);
+    const decodedGym = this.jwtService.decode(gymToken);
+    const user = await this.usersRepository.create(decodedUser.id, decodedUser.name, decodedGym.gymToken);
     return user
   }
 

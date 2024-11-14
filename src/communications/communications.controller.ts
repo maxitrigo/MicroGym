@@ -15,7 +15,9 @@ export class CommunicationsController {
   @UseGuards(AdminGuard)
   create(@Body() {title, message}, @Body() slug, @Headers('authorization') headers: string ) {
     const token = headers.split(' ')[1];
-    return this.communicationsService.create(title, message, token, slug.slug);
+    const gymToken = headers.split(' ')[2];
+
+    return this.communicationsService.create(title, message, token, gymToken);
   }
 
   @Get(':id')
@@ -26,8 +28,8 @@ export class CommunicationsController {
 
   @Delete(':id')
   @UseGuards(AdminGuard)
-  remove(@Param ('id') id: string, @Query('gymId') gymId: string, @Headers('authorization') headers: string ) {
+  remove(@Param ('id') id: string, @Query('gymToken') gymToken: string, @Headers('authorization') headers: string ) {
     const token = headers.split(' ')[1];
-    return this.communicationsService.remove(id, gymId, token);
+    return this.communicationsService.remove(id, gymToken, token);
   }
 }

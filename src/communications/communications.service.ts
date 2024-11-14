@@ -14,9 +14,12 @@ export class CommunicationsService {
     private readonly jwtService: JwtService
   ){}
 
-  async create(title, message, token: string, gymId: string) {
-    const decoded = this.jwtService.decode(token);
-    const owner = decoded.id
+  async create(title, message, token: string, gymToken: string) {
+    const decodedUser = this.jwtService.decode(token);
+    const decodedGym = this.jwtService.decode(gymToken);
+    const owner = decodedUser.id
+    const gymId = decodedGym.id
+    
     const gym = await this.gymsService.findById(gymId);
     if(!gym){
       throw new BadRequestException('gym not found')
@@ -33,7 +36,9 @@ export class CommunicationsService {
 
   async findByGymId(id: string) {
     try {
-      return await this.communicationsRepository.findByGymId(id);
+      const decoded = this.jwtService.decode(id)
+      const gymId = decoded.id
+      return await this.communicationsRepository.findByGymId(gymId);
     } catch (error) {
       console.log(error);
     }
@@ -52,9 +57,11 @@ export class CommunicationsService {
     await this.communicationsRepository.deleteOldCommunications();
   }
 
-  async remove(id: string, gymId: string, token: string) {
-    const decoded = this.jwtService.decode(token);
-    const owner = decoded.id
+  async remove(id: string, gymToken: string, token: string) {
+    const decodedUser = this.jwtService.decode(token);
+    const owner = decodedUser.id
+    const decodedGym = this.jwtService.decode(gymToken);
+    const gymId = decodedGym.id
     const gym = await this.gymsService.findById(gymId);
     if(!gym){
       throw new BadRequestException('gym not found')

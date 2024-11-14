@@ -6,6 +6,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { JWT_SECRET } from './config/env.config';
 import { UsersModule } from './users/users.module';
 import { CommunicationsModule } from './communications/communications.module';
+import { SuscriptionsModule } from './suscriptions/suscriptions.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { CommunicationsModule } from './communications/communications.module';
       signOptions: { expiresIn: '1h' } }),
     UsersModule,
     CommunicationsModule,
+    SuscriptionsModule,
   ],
   controllers: [],
   providers: [],
