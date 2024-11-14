@@ -15,8 +15,11 @@ export class User {
     @Column({default: 0})
     points: number;
 
-    @Column({type: 'simple-array', nullable: true})
-    trainingDates: string[];
+    @Column({type: 'boolean', default: false})
+    freePass: boolean;
+
+    @Column({type: 'simple-array', nullable: true, default: null})
+    trainingDates: string[] | null;
 
     @Column({default: 'active' })
     status: string;

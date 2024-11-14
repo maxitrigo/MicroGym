@@ -21,7 +21,6 @@ export class CommunicationsRepository {
         newCommunication.title = title
         newCommunication.message = message;
         newCommunication.gymId = gymId;
-        console.log(newCommunication);
         
         return await this.communicationsRepository.save(newCommunication);
     }

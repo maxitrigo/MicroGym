@@ -6,12 +6,14 @@ import axios from 'axios';
 import { JwtService } from '@nestjs/jwt';
 import { Roles } from 'src/Roles/roles.enum';
 import { JWT_SECRET } from 'src/config/env.config';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class GymsService {
   constructor(
     private readonly gymsRepository: GymsRepository,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
+    private readonly usersService: UsersService
   ) {}
 
   async create(token: string, createGymDto: CreateGymDto) {
@@ -41,7 +43,9 @@ export class GymsService {
 
       const newToken = response.data
       const newGym = await this.gymsRepository.findBySlug(createGymDto.slug);
-      console.log(newGym);
+
+      const addUser = await this.usersService.create(newGym.id, token);
+
       
       return { gym: newGym, token: newToken.newToken };
 

@@ -21,8 +21,7 @@ export class GymsController {
   }
 
   @Get()
-  @UseGuards(AdminGuard)
-  findAll() {
+  findAll(@Headers('authorization') authHeader: string) {
     return this.gymsService.findAll();
   }
 

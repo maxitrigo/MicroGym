@@ -16,11 +16,6 @@ export class UsersController {
     return this.usersService.create(gymId, token);
   }
 
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
-  }
-
   @Get('user')
   @UseGuards(AuthGuard)
   findOne(@Headers('authorization') authHeader: string) {
@@ -28,9 +23,18 @@ export class UsersController {
     return this.usersService.findOneById(token);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  @Post('log-training')
+  @UseGuards(AuthGuard)
+  logTrain(@Headers('authorization') authHeader: string) {
+    const token = authHeader.split(' ')[1];
+    return this.usersService.logTrain(token);
+  }
+
+  @Patch('patch')
+  @UseGuards(AuthGuard)
+  update(@Body() updateUserDto: UpdateUserDto, @Headers('authorization') authHeader: string) {
+    const token = authHeader.split(' ')[1];
+    return this.usersService.update(token, updateUserDto);
   }
 
   @Delete(':id')
