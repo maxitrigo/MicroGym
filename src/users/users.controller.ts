@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Headers, Head } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Headers} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from 'src/guards/auth.guard';
+import { AdminGuard } from 'src/guards/admin.guard';
 
 
 @Controller('users')
@@ -14,6 +15,26 @@ export class UsersController {
     const token = authHeader.split(' ')[1];
     const gymToken = body.gymToken;
     return this.usersService.create(gymToken, token);
+  }
+
+  @Post('update-subscription')
+  @UseGuards(AdminGuard)
+  updateSubscription(@Headers('authorization') authHeader: string ) {
+    const token = authHeader.split(' ')[1];
+    console.log(token);
+    return this.usersService.updateSubscription(token);
+  }
+
+  @Post('manual-update-subscription')
+  @UseGuards(AdminGuard)
+  manualUpdateSubscription(@Headers('authorization') authHeader: string, @Body() Body) {
+    const userId = Body.userId;
+    const UpdateUserDto = {
+      admissions: Body.admissions,
+      freePass: Body.freePass,
+      subscriptionEnd: Body.subscriptionEnd
+    };
+    return this.usersService.manualSubcriptionUpdate(userId, UpdateUserDto);
   }
 
   @Get('user')

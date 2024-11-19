@@ -10,7 +10,7 @@ export class User {
     name: string;
 
     @Column({default: 0})
-    admisions: number;
+    admissions: number;
 
     @Column({default: 0})
     points: number;
@@ -30,4 +30,7 @@ export class User {
     
     @Column()
     gymId: string;
+
+    @Column({default: null})
+    subscriptionEnd: Date
 }

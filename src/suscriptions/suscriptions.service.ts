@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { CreateSuscriptionDto } from './dto/create-suscription.dto';
 import { SuscriptionsRepository } from './suscriptions.repository';
 import { JwtService } from '@nestjs/jwt';
@@ -9,6 +9,7 @@ export class SuscriptionsService {
   constructor(
     private readonly suscriptionsRepository: SuscriptionsRepository,
     private readonly jwtService: JwtService,
+    @Inject(forwardRef(() => GymsService))
     private readonly gymsService: GymsService
   ) {}
 
@@ -35,6 +36,10 @@ export class SuscriptionsService {
     const decodedGym = this.jwtService.decode(id)
     const gymId = decodedGym.id
     return await this.suscriptionsRepository.findByGymId(gymId);
+  }
+
+  async findOne(id: string) {
+    return await this.suscriptionsRepository.findOne(id);
   }
 
 

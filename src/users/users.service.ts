@@ -1,15 +1,18 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository } from './users.repository';
 import { JwtService } from '@nestjs/jwt';
+import { SuscriptionsService } from 'src/suscriptions/suscriptions.service';
+
 
 @Injectable()
 export class UsersService {
 
   constructor(
     private readonly usersRepository: UsersRepository,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
+    @Inject(forwardRef(() => SuscriptionsService))
+    private readonly subscriptionsService: SuscriptionsService
   ) {}
 
   async create(gymToken: string, token: string) {
@@ -61,5 +64,28 @@ export class UsersService {
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  async updateSubscription(token: string) {
+    const decoded = this.jwtService.decode(token);
+    
+    const user = await this.usersRepository.findOneById(decoded.clientId)
+    
+    const subscription = await this.subscriptionsService.findOne(decoded.productId);
+    console.log(subscription);
+    const today = new Date()
+    const futureDate = new Date(today)
+    futureDate.setDate(today.getDate() + subscription.duration)
+    
+
+    
+    if (subscription && subscription.freePass) {
+      const updatedUser = await this.usersRepository.update(user.id, { freePass: subscription.freePass, subscriptionEnd: futureDate });
+    } else {
+      const updatedUser = await this.usersRepository.update(user.id, { admissions: subscription.admissions, subscriptionEnd: futureDate });
+    }
+  }
+  async manualSubcriptionUpdate(userId: string, UpdateUserDto: UpdateUserDto) {
+    return await this.usersRepository.update(userId, UpdateUserDto);
   }
 }

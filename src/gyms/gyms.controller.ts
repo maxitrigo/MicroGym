@@ -20,11 +20,6 @@ export class GymsController {
     return this.gymsService.create(token, createGymDto);
   }
 
-  @Get()
-  findAll(@Headers('authorization') authHeader: string) {
-    return this.gymsService.findAll();
-  }
-
   @Get(':slug')
   @UseGuards(AuthGuard)
   findOne(@Param('slug') slug: string) {
@@ -38,10 +33,10 @@ export class GymsController {
     return this.gymsService.findUsersByGymId(gymToken, token);
   }
 
-  @Patch(':id')
+  @Patch(':gymToken')
   @UseGuards(AdminGuard)
-  update(@Param('id') id: string, @Body() updateGymDto: UpdateGymDto) {
-    return this.gymsService.update(id, updateGymDto);
+  update(@Param('gymToken') gymToken: string, @Body() updateGymDto: UpdateGymDto) {
+    return this.gymsService.update(gymToken, updateGymDto);
   }
 
   @Delete(':id')

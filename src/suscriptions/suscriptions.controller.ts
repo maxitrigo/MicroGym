@@ -1,10 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Headers, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Headers, UseGuards, Query } from '@nestjs/common';
 import { SuscriptionsService } from './suscriptions.service';
-import { CreateSuscriptionDto } from './dto/create-suscription.dto';
 import { AdminGuard } from 'src/guards/admin.guard';
 
 
-@Controller('suscriptions')
+@Controller('subscriptions')
 export class SuscriptionsController {
   constructor(private readonly suscriptionsService: SuscriptionsService) {}
 

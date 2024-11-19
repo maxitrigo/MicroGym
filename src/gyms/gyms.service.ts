@@ -113,8 +113,10 @@ export class GymsService {
     }
   }
 
-  async update(id: string, updateGymDto: UpdateGymDto) {
+  async update(gymToken: string, updateGymDto: UpdateGymDto) {
     try{
+      const decodedGym = this.jwtService.decode(gymToken);
+      const id = decodedGym.gymId
       const gym = await this.gymsRepository.findById(id);
       if (!gym) {
         throw new BadRequestException('Gym not found');

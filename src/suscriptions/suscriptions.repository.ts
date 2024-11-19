@@ -16,6 +16,10 @@ export class SuscriptionsRepository {
         return await this.suscriptionsRepository.save(suscription);
     }
 
+    async findOne(id: string) {
+        return await this.suscriptionsRepository.findOneBy({id});
+    }
+
     async findByGymId(id: string) {
         return await this.suscriptionsRepository.find({where: {gymId: id}});
     }

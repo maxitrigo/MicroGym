@@ -4,14 +4,14 @@ import { GymsController } from './gyms.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Gym } from './entities/gym.entity';
 import { GymsRepository } from './gyms.repository';
-import { JwtService } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { UsersModule } from 'src/users/users.module';
 import { UsersService } from 'src/users/users.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Gym]) , UsersModule],
+  imports: [TypeOrmModule.forFeature([Gym]) , UsersModule, JwtModule],
   controllers: [GymsController],
-  providers: [GymsService, GymsRepository, JwtService],
+  providers: [GymsService, GymsRepository],
   exports: [GymsService],
 })
 export class GymsModule {}
