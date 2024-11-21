@@ -18,7 +18,10 @@ export class UsersService {
   async create(gymToken: string, token: string) {
     const decodedUser = this.jwtService.decode(token);
     const decodedGym = this.jwtService.decode(gymToken);
-    const user = await this.usersRepository.create(decodedUser.id, decodedUser.name, decodedGym.gymToken);
+    console.log(decodedGym);
+    
+    
+    const user = await this.usersRepository.create(decodedUser.id, decodedUser.name, decodedGym.id);
     return user
   }
 

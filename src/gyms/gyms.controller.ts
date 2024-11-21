@@ -26,6 +26,15 @@ export class GymsController {
     return this.gymsService.findBySlug(slug);
   }
 
+  @Get(':gymToken/metrics')
+  @UseGuards(AdminGuard)
+  gymMetrics( @Headers('authorization') authHeader: string, @Param('gymToken') gymToken: string) {
+    const token = authHeader.split(' ')[1];
+    console.log(gymToken);
+    
+    return this.gymsService.gymMetrics(token, gymToken);
+  }
+
   @Get(':gymToken/users')
   @UseGuards(AdminGuard)
   findUsersByGymId(@Param('gymToken') gymToken: string, @Headers('authorization') authHeader: string) {

@@ -7,7 +7,6 @@ import { JwtService } from '@nestjs/jwt';
 import { Roles } from 'src/Roles/roles.enum';
 import { JWT_SECRET } from 'src/config/env.config';
 import { UsersService } from 'src/users/users.service';
-import e from 'express';
 
 @Injectable()
 export class GymsService {
@@ -148,4 +147,76 @@ export class GymsService {
       console.log(error);
     }
   }
+
+async gymMetrics(token: string, gymToken: string) {
+    // Decodificar el token del gimnasio
+    const decoded = this.jwtService.decode(gymToken);
+
+    const gym = await this.gymsRepository.findById(decoded.id);
+
+    // Obtener transacciones del gimnasio
+    const transactionsResponse = await axios.get('http://localhost:3000/transactions', {
+        headers: { 'Authorization': `Bearer ${token}` },
+        params: { gymToken: gymToken }
+    });
+
+    const transactions = transactionsResponse.data;
+
+    // Obtener usuarios del gimnasio
+    const gymData = await this.gymsRepository.findUsersByGymId(gym.id);
+    const activeUsers = gymData.users.filter(user => user.status === 'active');
+
+    // **Miembros Activos**
+    const activeMembersCount = activeUsers.length;
+
+    // **Retención de Clientes (usuarios que han entrenado en los últimos 30 días)**
+    const retainedUsers = activeUsers.filter(user => {
+        if (user.trainingDates && user.trainingDates.length > 0) {
+            const lastTrainingDate = new Date(user.trainingDates[user.trainingDates.length - 1]);
+            const daysAgo = (new Date().getTime() - lastTrainingDate.getTime()) / (1000 * 3600 * 24);
+            return daysAgo <= 30; // Últimos 30 días
+        }
+        return false;
+    });
+    const retentionRate = (retainedUsers.length / activeMembersCount) * 100;
+
+    // **Tasa de Abandono (usuarios activos que no han entrenado en los últimos 30 días)**
+    const churnedUsers = activeUsers.filter(user => {
+        if (user.trainingDates && user.trainingDates.length > 0) {
+            const lastTrainingDate = new Date(user.trainingDates[user.trainingDates.length - 1]);
+            const daysAgo = (new Date().getTime() - lastTrainingDate.getTime()) / (1000 * 3600 * 24);
+            return daysAgo > 30; // No han entrenado en los últimos 30 días
+        }
+        return true; // Si no tiene fechas de entrenamiento, lo consideramos abandonado
+    });
+    const churnRate = (churnedUsers.length / activeMembersCount) * 100;
+
+    // **Ingresos Mensuales Recurrentes (MRR)**
+    // Agrupar transacciones por año
+    const currentYear = new Date().getFullYear();
+    const yearTransactions = transactions.filter(transaction => new Date(transaction.date).getFullYear() === currentYear);
+    
+    
+    // Obtener el mes de la primera transacción
+    const firstTransactionDate = new Date(yearTransactions[0]?.date);
+    const monthsSinceFirstTransaction = Math.ceil((new Date().getTime() - firstTransactionDate.getTime()) / (1000 * 3600 * 24 * 30)); // Dividir entre meses
+
+    // Ingresos mensuales recurrentes
+    const totalIncome = yearTransactions.reduce((sum, transaction) => sum + Number(transaction.netAmount), 0);
+    const mrr = totalIncome / monthsSinceFirstTransaction;
+
+    // **Ingresos por Cliente**
+    const incomePerUser = totalIncome / activeMembersCount;
+
+    // Retornar las métricas
+    return {
+        activeMembersCount,
+        retentionRate,
+        churnRate,
+        mrr,
+        totalIncome,
+        incomePerUser
+    };
+}
+
 }
