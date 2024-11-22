@@ -7,9 +7,24 @@ import { UpdateWorkoutDto } from './dto/update-workout.dto';
 export class WorkoutsController {
   constructor(private readonly workoutsService: WorkoutsService) {}
 
-  @Post()
-  create(@Body() createWorkoutDto: CreateWorkoutDto) {
-    return this.workoutsService.create(createWorkoutDto);
+  @Post('gymWorkout')
+  create(@Body() userData ) {
+    return this.workoutsService.createGymWorkout(userData);
+  }
+
+  @Post('functionalWorkout')
+  createFunctionalWorkout(@Body() userData ) {
+    return this.workoutsService.createFunctionalWorkout(userData);
+  }
+
+  @Post('crossfitWorkout')
+  createCrossfitWorkout(@Body() userData ) {
+    return this.workoutsService.createCrossfitWorkout(userData);
+  }
+
+  @Post('bodyweightWorkout')
+  createBodyweightWorkout(@Body() userData ) {
+    return this.workoutsService.createBodyweightWorkout(userData);
   }
 
   @Get()
