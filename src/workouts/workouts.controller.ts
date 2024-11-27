@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Headers } from '@nestjs/common';
 import { WorkoutsService } from './workouts.service';
 import { CreateWorkoutDto } from './dto/create-workout.dto';
 import { UpdateWorkoutDto } from './dto/update-workout.dto';
@@ -14,6 +14,8 @@ export class WorkoutsController {
 
   @Post('functionalWorkout')
   createFunctionalWorkout(@Body() userData ) {
+    console.log(userData);
+    
     return this.workoutsService.createFunctionalWorkout(userData);
   }
 
@@ -27,23 +29,26 @@ export class WorkoutsController {
     return this.workoutsService.createBodyweightWorkout(userData);
   }
 
+  @Post('saveGymWorkout')
+  saveWorkout(@Body() workout, @Headers('authorization') authHeader: string) {
+    const token = authHeader.split(' ')[1];
+    console.log(workout);
+    return this.workoutsService.saveWorkout(workout, token);
+  }
+
   @Get()
   findAll() {
     return this.workoutsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.workoutsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateWorkoutDto: UpdateWorkoutDto) {
-    return this.workoutsService.update(+id, updateWorkoutDto);
+  @Get('userWorkouts')
+  findOne(@Headers('authorization') authHeader: string) {
+    const token = authHeader.split(' ')[1];
+    return this.workoutsService.findOne(token);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.workoutsService.remove(+id);
+    return this.workoutsService.remove(id);
   }
 }

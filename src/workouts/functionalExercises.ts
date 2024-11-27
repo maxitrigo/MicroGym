@@ -4,7 +4,7 @@ const functionalExercises = {
         { name: 'Estocadas', variations: ['con barra', 'mancuernas', 'caminando'] },
         { name: 'Flexiones', variations: ['normales', 'diamante', 'con rodillas'] },
         { name: 'Remo con mancuernas', variations: ['a una mano', 'a dos manos'] },
-        { name: 'Plank', variations: ['normal', 'con elevación de pierna'] },
+        { name: 'Planchas', variations: ['normal', 'con elevación de pierna'] },
         { name: 'Mountain Climbers', variations: [] },
         { name: 'Lunges con salto', variations: [] },
         { name: 'Sentadilla en caja', variations: ['con mancuernas'] },

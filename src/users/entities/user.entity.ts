@@ -1,5 +1,6 @@
 import { Gym } from "src/gyms/entities/gym.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
+import { Workout } from "src/workouts/entities/workout.entity";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from "typeorm";
 
 @Entity()
 export class User {
@@ -30,6 +31,9 @@ export class User {
     
     @Column()
     gymId: string;
+
+    @OneToMany(() => Workout, (workout) => workout.user)
+    workouts: Workout[];
 
     @Column({default: null})
     subscriptionEnd: Date
