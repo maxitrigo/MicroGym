@@ -26,6 +26,12 @@ export class GymsController {
     return this.gymsService.findBySlug(slug);
   }
 
+  @Get()
+  // @UseGuards(AuthGuard)
+  findAll() {
+    return this.gymsService.findAll();
+  }
+
   @Get(':gymToken/metrics')
   @UseGuards(AdminGuard)
   gymMetrics( @Headers('authorization') authHeader: string, @Param('gymToken') gymToken: string) {

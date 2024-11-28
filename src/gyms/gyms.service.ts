@@ -196,7 +196,6 @@ async gymMetrics(token: string, gymToken: string) {
     const currentYear = new Date().getFullYear();
     const yearTransactions = transactions.filter(transaction => new Date(transaction.date).getFullYear() === currentYear);
     
-    
     // Obtener el mes de la primera transacción
     const firstTransactionDate = new Date(yearTransactions[0]?.date);
     const monthsSinceFirstTransaction = Math.ceil((new Date().getTime() - firstTransactionDate.getTime()) / (1000 * 3600 * 24 * 30)); // Dividir entre meses
