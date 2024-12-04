@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateGymDto } from './dto/create-gym.dto';
 import { UpdateGymDto } from './dto/update-gym.dto';
 import { GymsRepository } from './gyms.repository';
@@ -105,7 +105,7 @@ export class GymsService {
       throw new BadRequestException('You are not the owner of this gym');
     }
     try{
-      const gym = await this.gymsRepository.findUsersByGymId(decodedGym.gymId);
+      const gym = await this.gymsRepository.findUsersByGymId(decodedGym.id);
       return gym ? gym.users : [];
     } catch (error) {
       console.log(error);
@@ -148,74 +148,102 @@ export class GymsService {
     }
   }
 
-async gymMetrics(token: string, gymToken: string) {
-    // Decodificar el token del gimnasio
-    const decoded = this.jwtService.decode(gymToken);
+  async gymMetrics(token: string, gymToken: string) {
+      // Decodificar el token del gimnasio
+      const decodedGym = this.jwtService.decode(gymToken);
+      const decodedUser = this.jwtService.decode(token)
+      const gym = await this.gymsRepository.findById(decodedGym.id);
+      
+      if (gym.owner !== decodedUser.id) {
+        throw new UnauthorizedException('usuario no autorizado')
+      }
 
-    const gym = await this.gymsRepository.findById(decoded.id);
+      // Obtener transacciones del gimnasio
+      const transactionsResponse = await axios.get(`http://localhost:3000/transactions/${gymToken}`, {
+          headers: { 'Authorization': `Bearer ${token}` },
+      });
 
-    // Obtener transacciones del gimnasio
-    const transactionsResponse = await axios.get('http://localhost:3000/transactions', {
-        headers: { 'Authorization': `Bearer ${token}` },
-        params: { gymToken: gymToken }
-    });
+      const transactions = transactionsResponse.data;
 
-    const transactions = transactionsResponse.data;
+      // Obtener usuarios del gimnasio
+      const gymData = await this.gymsRepository.findUsersByGymId(gym.id);
+      const activeUsers = gymData.users.filter(user => user.status === 'active');
 
-    // Obtener usuarios del gimnasio
-    const gymData = await this.gymsRepository.findUsersByGymId(gym.id);
-    const activeUsers = gymData.users.filter(user => user.status === 'active');
+      // **Miembros Activos**
+      const activeMembersCount = activeUsers.length;
 
-    // **Miembros Activos**
-    const activeMembersCount = activeUsers.length;
+      // **Retención de Clientes (usuarios que han entrenado en los últimos 30 días)**
+      const retainedUsers = activeUsers.filter(user => {
+          if (user.trainingDates && user.trainingDates.length > 0) {
+              const lastTrainingDate = new Date(user.trainingDates[user.trainingDates.length - 1]);
+              const daysAgo = (new Date().getTime() - lastTrainingDate.getTime()) / (1000 * 3600 * 24);
+              return daysAgo <= 30; // Últimos 30 días
+          }
+          return false;
+      });
+      const retentionRate = (retainedUsers.length / activeMembersCount) * 100;
 
-    // **Retención de Clientes (usuarios que han entrenado en los últimos 30 días)**
-    const retainedUsers = activeUsers.filter(user => {
-        if (user.trainingDates && user.trainingDates.length > 0) {
-            const lastTrainingDate = new Date(user.trainingDates[user.trainingDates.length - 1]);
-            const daysAgo = (new Date().getTime() - lastTrainingDate.getTime()) / (1000 * 3600 * 24);
-            return daysAgo <= 30; // Últimos 30 días
-        }
-        return false;
-    });
-    const retentionRate = (retainedUsers.length / activeMembersCount) * 100;
+      // **Tasa de Abandono (usuarios activos que no han entrenado en los últimos 30 días)**
+      const churnedUsers = activeUsers.filter(user => {
+          if (user.trainingDates && user.trainingDates.length > 0) {
+              const lastTrainingDate = new Date(user.trainingDates[user.trainingDates.length - 1]);
+              const daysAgo = (new Date().getTime() - lastTrainingDate.getTime()) / (1000 * 3600 * 24);
+              return daysAgo > 30; // No han entrenado en los últimos 30 días
+          }
+          return true; // Si no tiene fechas de entrenamiento, lo consideramos abandonado
+      });
+      const churnRate = (churnedUsers.length / activeMembersCount) * 100;
 
-    // **Tasa de Abandono (usuarios activos que no han entrenado en los últimos 30 días)**
-    const churnedUsers = activeUsers.filter(user => {
-        if (user.trainingDates && user.trainingDates.length > 0) {
-            const lastTrainingDate = new Date(user.trainingDates[user.trainingDates.length - 1]);
-            const daysAgo = (new Date().getTime() - lastTrainingDate.getTime()) / (1000 * 3600 * 24);
-            return daysAgo > 30; // No han entrenado en los últimos 30 días
-        }
-        return true; // Si no tiene fechas de entrenamiento, lo consideramos abandonado
-    });
-    const churnRate = (churnedUsers.length / activeMembersCount) * 100;
+      // **Ingresos Mensuales Recurrentes (MRR)**
+      // Agrupar transacciones por año
+      const currentYear = new Date().getFullYear();
+      const yearTransactions = transactions.filter(transaction => new Date(transaction.date).getFullYear() === currentYear);
+      
+      // Obtener el mes de la primera transacción
+      const firstTransactionDate = new Date(yearTransactions[0]?.date);
+      const monthsSinceFirstTransaction = Math.ceil((new Date().getTime() - firstTransactionDate.getTime()) / (1000 * 3600 * 24 * 30)); // Dividir entre meses
 
-    // **Ingresos Mensuales Recurrentes (MRR)**
-    // Agrupar transacciones por año
-    const currentYear = new Date().getFullYear();
-    const yearTransactions = transactions.filter(transaction => new Date(transaction.date).getFullYear() === currentYear);
+      // Ingresos mensuales recurrentes
+      const totalIncome = yearTransactions.reduce((sum, transaction) => sum + Number(transaction.netAmount), 0);
+      const mrr = totalIncome / monthsSinceFirstTransaction;
+
+      // **Ingresos por Cliente**
+      const incomePerUser = totalIncome / activeMembersCount;
+
+      // Retornar las métricas
+      return {
+          activeMembersCount,
+          retentionRate,
+          churnRate,
+          mrr,
+          totalIncome,
+          incomePerUser
+      };
+  }
+
+  async checkOwnership ( token: string, gymToken: string) {
+    console.log('token',token);
+    console.log('gymToken',gymToken);
     
-    // Obtener el mes de la primera transacción
-    const firstTransactionDate = new Date(yearTransactions[0]?.date);
-    const monthsSinceFirstTransaction = Math.ceil((new Date().getTime() - firstTransactionDate.getTime()) / (1000 * 3600 * 24 * 30)); // Dividir entre meses
+    const decodedGym = this.jwtService.decode(gymToken)
+    const decodedUser = this.jwtService.decode(token)
+    const gym = await this.gymsRepository.findById(decodedGym.id)
+    if(gym.owner !== decodedUser.id || gymToken === null) {
+      console.log('no autorizado');
+      throw new UnauthorizedException ('Usted no esta habilitado para ingresar en este gym')
+    }
+    return true
+  }
 
-    // Ingresos mensuales recurrentes
-    const totalIncome = yearTransactions.reduce((sum, transaction) => sum + Number(transaction.netAmount), 0);
-    const mrr = totalIncome / monthsSinceFirstTransaction;
+  async checkLogin(token:string, gymToken:string) {
+    const decodedUser = this.jwtService.decode(token)
+    const decodedGym = this.jwtService.decode(gymToken)
 
-    // **Ingresos por Cliente**
-    const incomePerUser = totalIncome / activeMembersCount;
+    const gym = await this.gymsRepository.findUsersByGymId(decodedGym.id)
+    const gymUsers = gym.users
 
-    // Retornar las métricas
-    return {
-        activeMembersCount,
-        retentionRate,
-        churnRate,
-        mrr,
-        totalIncome,
-        incomePerUser
-    };
-}
+    const isUserInGym = gymUsers.some((user) => user.id === decodedUser.id);
+    return isUserInGym
+  }
 
 }

@@ -93,16 +93,8 @@ const gymExercises = {
         { name: 'Peso muerto rumano', variations: ['con barra', 'mancuernas'] }
     ],
     pantorrillas: [
-        { name: 'Elevación de talones de pie', variations: ['con barra', 'con mancuernas'] },
-        { name: 'Elevación de talones sentado', variations: ['con mancuernas', 'en máquina'] },
-        { name: 'Elevación de talones en prensa', variations: [] },
-        { name: 'Elevación de talones con banda', variations: [] },
-        { name: 'Elevación de talones en escalón', variations: [] },
-        { name: 'Saltos de talones', variations: [] },
-        { name: 'Elevación de talones con máquina', variations: [] },
-        { name: 'Elevación de talones a una pierna', variations: [] },
-        { name: 'Elevación de talones en máquina sentado', variations: [] },
-        { name: 'Elevación de talones con mancuernas', variations: [] }
+        { name: 'Elevación de talones de pie', variations: ['con barra', 'con mancuernas', 'a una pierna'] },
+        { name: 'Elevación de talones sentado', variations: ['con mancuernas', 'en máquina', 'en prensa'] },
     ]
 };
 

@@ -29,7 +29,7 @@ export class User {
     @JoinColumn({name: "gymId"})
     gym: Gym
     
-    @Column()
+    @Column({nullable: true})
     gymId: string;
 
     @OneToMany(() => Workout, (workout) => workout.user)

@@ -41,29 +41,68 @@ export class UsersService {
   }
 
   async logTrain(token: string) {
-    const decoded = this.jwtService.decode(token);
+    const decoded = this.jwtService.decode(token) as { id: string };
+  
+    if (!decoded || !decoded.id) {
+      throw new Error("Token inválido o decodificado incorrectamente.");
+    }
+  
     const date = new Date();
     const formatedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-    
+  
     const user = await this.usersRepository.findOneById(decoded.id);
-    
-    // Asegurarse de que trainingDates exista
-    if (!user.trainingDates) {
-      user.trainingDates = [];
-      await this.usersRepository.update(decoded.id, { trainingDates: user.trainingDates });
+  
+    if (!user) {
+      throw new Error("Usuario no encontrado.");
     }
   
-    // Eliminar cualquier valor null o indefinido de trainingDates
-    user.trainingDates = user.trainingDates.filter(date => date != null);
+    // Asegurarse de que trainingDates sea un array válido
+    user.trainingDates = user.trainingDates?.filter(date => date != null) || [];
   
-    // Comprobar si la fecha ya está en el array
-    if (!user.trainingDates.includes(formatedDate)) {
+    // Si la fecha ya está registrada, no hacemos nada
+    if (user.trainingDates.includes(formatedDate)) {
+      return user;
+    }
+  
+    // Si la fecha no está registrada y freePass es true, registramos el entrenamiento
+    if (user.freePass) {
+      try {
+        user.trainingDates.push(formatedDate);
+  
+        // Actualizar trainingDates sin afectar las admisiones
+        await this.usersRepository.update(decoded.id, {
+          trainingDates: user.trainingDates,
+        });
+      } catch (error) {
+        console.error("Error al actualizar usuario:", error);
+        throw new Error("No se pudo registrar el entrenamiento.");
+      }
+      return user;
+    }
+  
+    // Si la fecha no está registrada y freePass es false, comprobar si admissions es mayor que 0
+    if (user.admissions <= 0) {
+      throw new Error("No tienes más admisiones disponibles.");
+    }
+  
+    try {
+      // Actualizar trainingDates y admissions en una única operación
       user.trainingDates.push(formatedDate);
-      await this.usersRepository.update(decoded.id, { trainingDates: user.trainingDates });
+      user.admissions -= 1;
+  
+      await this.usersRepository.update(decoded.id, {
+        trainingDates: user.trainingDates,
+        admissions: user.admissions,
+      });
+    } catch (error) {
+      console.error("Error al actualizar usuario:", error);
+      throw new Error("No se pudo registrar el entrenamiento.");
     }
   
-    return { message: 'Training date logged successfully' };
+    return user;
   }
+  
+  
 
   remove(id: number) {
     return `This action removes a #${id} user`;
@@ -90,5 +129,34 @@ export class UsersService {
   }
   async manualSubcriptionUpdate(userId: string, UpdateUserDto: UpdateUserDto) {
     return await this.usersRepository.update(userId, UpdateUserDto);
+  }
+
+  async deleteUserGym (token, userId, gymToken) {
+    const decodedGym = this.jwtService.decode(gymToken)
+    const gymId = decodedGym.id
+
+    if (userId) {
+      const user = await this.usersRepository.findOneById(userId)
+      if ( gymId === user.gymId ) {
+        const newGym = null
+        const id = user.id
+        const removeGym = await this.usersRepository.update(id, 
+          {
+          gymId: newGym,
+          freePass: false,
+          admissions: 0,
+          subscriptionEnd: null
+         })
+        return removeGym
+      }
+    }
+    const decodedUser = this.jwtService.decode(token)
+    const user = await this.usersRepository.findOneById(decodedUser.id)
+    if ( gymId === user.gymId ) {
+      const newGym = ''
+      const removeGym = await this.update(decodedUser.id, { gymId: newGym })
+      return removeGym
+    }
+
   }
 }

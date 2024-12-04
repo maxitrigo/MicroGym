@@ -58,8 +58,10 @@ export class UsersController {
     return this.usersService.update(token, updateUserDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  @Patch('deleteUserGym')
+  @UseGuards(AuthGuard)
+  deleteUserGym(@Body('gymToken') gymToken: string, @Body('userId') userId: string, @Headers('authorization') authHeader: string){
+    const token = authHeader.split(' ')[1]
+    return this.usersService.deleteUserGym(token, userId, gymToken)
   }
 }

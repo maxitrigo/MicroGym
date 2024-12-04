@@ -16,7 +16,7 @@ import { SuscriptionsModule } from './suscriptions/suscriptions.module';
     JwtModule.register({
       global: true, 
       secret: JWT_SECRET, 
-      signOptions: { expiresIn: '1h' } }),
+      signOptions: { expiresIn: '4h' } }),
     UsersModule,
     CommunicationsModule,
     SuscriptionsModule,
