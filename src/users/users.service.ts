@@ -126,11 +126,12 @@ export class UsersService {
   }
 
   async deleteUserGym (token, userId, gymToken) {
+    const decodedUser = this.jwtService.decode(token)
     const decodedGym = this.jwtService.decode(gymToken)
     const gymId = decodedGym.id
 
-    if (userId) {
-      const user = await this.usersRepository.findOneById(userId)
+    if (userId === '') {
+      const user = await this.usersRepository.findOneById(decodedUser.id)
       if ( gymId === user.gymId ) {
         const newGym = null
         const id = user.id
@@ -144,21 +145,24 @@ export class UsersService {
         return removeGym
       }
     }
-    const decodedUser = this.jwtService.decode(token)
-    const user = await this.usersRepository.findOneById(decodedUser.id)
+    const user = await this.usersRepository.findOneById(userId)
     if ( gymId === user.gymId ) {
-      const newGym = ''
-      const removeGym = await this.update(decodedUser.id, { gymId: newGym })
-      return removeGym
+        const newGym = null
+        const id = user.id
+        const removeGym = await this.usersRepository.update(id, 
+          {
+          gymId: newGym,
+          freePass: false,
+          admissions: 0,
+          subscriptionEnd: null
+         })
+        return removeGym
     }
   }
 
   async checkLogin(token: string, gymToken: string) {
     const decodedGym = this.jwtService.decode(gymToken);
     const decodedUser = this.jwtService.decode(token);
-    
-    console.log(decodedUser);
-    
     // Comprobar si el decodedUser tiene un id válido
     if (!decodedUser || !decodedUser.id) {
       throw new Error("Usuario no válido o token inválido.");
@@ -166,8 +170,7 @@ export class UsersService {
     
     // Buscar el usuario en la base de datos
     const user = await this.usersRepository.findOneById(decodedUser.id);
-    
-    console.log(user);
+
     
     // Si el usuario no se encuentra en la base de datos
     if (!user) {
