@@ -57,7 +57,6 @@ export class GymsController {
   @UseGuards(AdminGuard)
   findUsersByGymId(@Param('gymToken') gymToken: string, @Headers('authorization') authHeader: string) {
     const token = authHeader.split(' ')[1];
-    console.log(gymToken);
     return this.gymsService.findUsersByGymId(gymToken, token);
   }
 

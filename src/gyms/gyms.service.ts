@@ -100,7 +100,7 @@ export class GymsService {
     const decodedUser = this.jwtService.decode(token);
     const owner = decodedUser.id
     const decodedGym = this.jwtService.decode(gymToken);
-    const gymOwner = await this.gymsRepository.findById(decodedGym.gymId);
+    const gymOwner = await this.gymsRepository.findById(decodedGym.id);
     if (gymOwner.owner !== owner) {
       throw new BadRequestException('You are not the owner of this gym');
     }
