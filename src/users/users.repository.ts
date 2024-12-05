@@ -21,4 +21,13 @@ export class UsersRepository {
     async update(id: string, updateUserDto: UpdateUserDto) {
         return await this.usersRepository.update({id}, updateUserDto);
     }
+
+      // Función para actualizar muchos usuarios a la vez
+    async updateMany(where: object, updateData: object) {
+        return await this.usersRepository.update(where, updateData);
+    }
+
+    async delete(id: string) {
+        return await this.usersRepository.delete(id);
+    }
 }

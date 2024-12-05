@@ -126,23 +126,23 @@ export class GymsService {
     }
   }
 
-  async remove(id: string, token: string) {
+  async remove(gymToken: string, token: string) {
     try{
+      const decodedGym = this.jwtService.decode(gymToken);
+      const id = decodedGym.id
       const decoded = this.jwtService.decode(token);
       const gym = await this.gymsRepository.findById(id);
       if (decoded.id !== gym.owner) {
         throw new BadRequestException('You are not the owner of this gym');
       }
+      // Desvincular a los usuarios del gimnasio antes de eliminarlo
+      await this.usersService.unlinkUsersFromGym(id);
       await this.gymsRepository.remove(id);
-      await axios.patch('http://localhost:3001/auth/role', 
-        {
-          email: decoded.email,
-          role: Roles.User
-        },
-        {
-          headers: { 'Authorization': `Bearer ${token}` }
-        }
-      );
+      await axios.delete('http://localhost:3001/auth/delete', {
+        headers: { Authorization: `Bearer ${token}` },
+        data: { email: decoded.email } // Aquí va el cuerpo de la solicitud
+      });
+      return { message: 'Gym deleted successfully' };
     } catch (error) {
       console.log(error);
     }
@@ -233,17 +233,6 @@ export class GymsService {
       throw new UnauthorizedException ('Usted no esta habilitado para ingresar en este gym')
     }
     return true
-  }
-
-  async checkLogin(token:string, gymToken:string) {
-    const decodedUser = this.jwtService.decode(token)
-    const decodedGym = this.jwtService.decode(gymToken)
-
-    const gym = await this.gymsRepository.findUsersByGymId(decodedGym.id)
-    const gymUsers = gym.users
-
-    const isUserInGym = gymUsers.some((user) => user.id === decodedUser.id);
-    return isUserInGym
   }
 
 }

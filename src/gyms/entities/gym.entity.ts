@@ -14,17 +14,17 @@ export class Gym {
     name: string;
 
     @Column({
-        nullable: false,
+        nullable: true,
     })
     address: string;
 
     @Column({
-        nullable: false,
+        nullable: true,
     })
     phone: string;
 
     @Column({
-        nullable: false,
+        nullable: true,
     })
     email: string;
 

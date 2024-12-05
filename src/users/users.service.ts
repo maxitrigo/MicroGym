@@ -1,13 +1,13 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository } from './users.repository';
 import { JwtService } from '@nestjs/jwt';
 import { SuscriptionsService } from 'src/suscriptions/suscriptions.service';
+import axios from 'axios';
 
 
 @Injectable()
 export class UsersService {
-
   constructor(
     private readonly usersRepository: UsersRepository,
     private readonly jwtService: JwtService,
@@ -101,12 +101,6 @@ export class UsersService {
   
     return user;
   }
-  
-  
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  }
 
   async updateSubscription(token: string) {
     const decoded = this.jwtService.decode(token);
@@ -157,6 +151,77 @@ export class UsersService {
       const removeGym = await this.update(decodedUser.id, { gymId: newGym })
       return removeGym
     }
-
   }
+
+  async checkLogin(token: string, gymToken: string) {
+    const decodedGym = this.jwtService.decode(gymToken);
+    const decodedUser = this.jwtService.decode(token);
+    
+    console.log(decodedUser);
+    
+    // Comprobar si el decodedUser tiene un id válido
+    if (!decodedUser || !decodedUser.id) {
+      throw new Error("Usuario no válido o token inválido.");
+    }
+    
+    // Buscar el usuario en la base de datos
+    const user = await this.usersRepository.findOneById(decodedUser.id);
+    
+    console.log(user);
+    
+    // Si el usuario no se encuentra en la base de datos
+    if (!user) {
+      throw new Error("Usuario no encontrado.");
+    }
+  
+    // Verificar si el usuario ya tiene un gimnasio asignado
+    if (user.gymId === null) {
+      // Asignar el gimnasio al usuario si no tiene uno
+      await this.usersRepository.update(user.id, { gymId: decodedGym.id });
+      return true;
+    }
+  
+    // Si el usuario ya tiene un gimnasio, verificar si coincide con el gimnasio recibido
+    if (decodedGym.id === user.gymId) {
+      return true;
+    }
+  
+    // Si no coincide, puedes retornar un mensaje o realizar alguna otra acción
+    throw new Error("El gimnasio no coincide con el asignado al usuario.");
+  }
+  
+
+  async unlinkUsersFromGym(gymId: string) {
+    // Actualizar todos los usuarios que tienen el gimnasio asignado
+    await this.usersRepository.updateMany({ gymId }, { gymId: null, freePass: false, admissions: 0, subscriptionEnd: null });
+    return { message: `Users successfully unlinked from gym with ID ${gymId}` };
+  }
+
+  async deleteUser(token: string) {
+    try {
+      const decoded = this.jwtService.decode(token);
+      const user = await this.usersRepository.findOneById(decoded.id);
+  
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+  
+      // Eliminar el usuario de la base de datos
+      await this.usersRepository.delete(user.id);
+  
+      // Realizar la solicitud para eliminar la autenticación del usuario
+      await axios.delete('http://localhost:3001/auth/delete', {
+        headers: { Authorization: `Bearer ${token}` },
+        data: { email: decoded.email },
+      });
+  
+      return { message: 'User deleted successfully' };
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException('Failed to delete user');
+    }
+  }
+  
+
+  
 }

@@ -37,6 +37,13 @@ export class UsersController {
     return this.usersService.manualSubcriptionUpdate(userId, UpdateUserDto);
   }
 
+  @Post('checkLogin')
+  @UseGuards(AuthGuard)
+  checkLogin(@Body('gymToken') gymToken: string,@Headers('authorization') authHeader: string) {
+    const token = authHeader.split(' ')[1];
+    return this.usersService.checkLogin(token, gymToken)
+  }
+
   @Get('user')
   @UseGuards(AuthGuard)
   findOne(@Headers('authorization') authHeader: string) {
@@ -63,5 +70,12 @@ export class UsersController {
   deleteUserGym(@Body('gymToken') gymToken: string, @Body('userId') userId: string, @Headers('authorization') authHeader: string){
     const token = authHeader.split(' ')[1]
     return this.usersService.deleteUserGym(token, userId, gymToken)
+  }
+
+  @Delete('deleteUser')
+  @UseGuards(AuthGuard)
+  deleteUser(@Headers('authorization') authHeader: string) {
+    const token = authHeader.split(' ')[1];
+    return this.usersService.deleteUser(token);
   }
 }
