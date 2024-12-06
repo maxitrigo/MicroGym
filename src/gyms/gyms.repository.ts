@@ -30,6 +30,7 @@ export class GymsRepository {
     async create(owner: string, gym: CreateGymDto): Promise<Gym> {
         await this.gymsRepository.create(gym);
         gym.owner = owner;
+        gym.subscriptionEnd = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
         return await this.gymsRepository.save(gym);
     }
 

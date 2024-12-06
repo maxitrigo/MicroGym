@@ -18,8 +18,8 @@ export class GymsService {
 
   async create(token: string, createGymDto: CreateGymDto) {
     try{
-      const decoded = this.jwtService.decode(token);
-      const owner = decoded.id
+      const decodedUser = this.jwtService.decode(token);
+      const owner = decodedUser.id
       const slug = await this.gymsRepository.findBySlug(createGymDto.slug);
 
       if (slug) {
@@ -33,7 +33,7 @@ export class GymsService {
       }, {secret: JWT_SECRET})
       const response = await axios.patch('http://localhost:3001/auth/role', 
         {
-          email: decoded.email,
+          email: decodedUser.email,
           role: Roles.Admin
         },
         {
@@ -43,9 +43,6 @@ export class GymsService {
 
       const newToken = response.data
       const newGym = await this.gymsRepository.findBySlug(createGymDto.slug);
-
-      const addUser = await this.usersService.create(newGym.id, token);
-
       
       return { gym: newGym, token: newToken.newToken };
 

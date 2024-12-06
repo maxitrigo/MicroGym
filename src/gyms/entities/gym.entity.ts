@@ -1,4 +1,3 @@
-import { timestamp } from "rxjs";
 import { User } from "src/users/entities/user.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { v4 as uuidv4 } from "uuid";
