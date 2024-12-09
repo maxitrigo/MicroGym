@@ -37,4 +37,7 @@ export class User {
 
     @Column({default: null})
     subscriptionEnd: Date
+
+    @Column({default: false})
+    unlink: boolean
 }

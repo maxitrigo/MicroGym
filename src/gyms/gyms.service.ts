@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateGymDto } from './dto/create-gym.dto';
 import { UpdateGymDto } from './dto/update-gym.dto';
 import { GymsRepository } from './gyms.repository';
@@ -7,13 +7,15 @@ import { JwtService } from '@nestjs/jwt';
 import { Roles } from 'src/Roles/roles.enum';
 import { JWT_SECRET } from 'src/config/env.config';
 import { UsersService } from 'src/users/users.service';
+import { GymMembershipService } from 'src/gym-membership/gym-membership.service';
 
 @Injectable()
 export class GymsService {
   constructor(
     private readonly gymsRepository: GymsRepository,
     private readonly jwtService: JwtService,
-    private readonly usersService: UsersService
+    private readonly usersService: UsersService,
+    private readonly gymMembershipService: GymMembershipService
   ) {}
 
   async create(token: string, createGymDto: CreateGymDto) {
@@ -68,12 +70,17 @@ export class GymsService {
     }
   }
 
-  async findBySlug(slug: string) {
+  async findBySlug(slug: string, token: string) {
     try{
       const gym = await this.gymsRepository.findBySlug(slug);
+      if (!gym) {
+        throw new NotFoundException('Gym not found');
+      }
       const gymToken = this.jwtService.sign({
         id: gym.id,
+        slug: gym.slug,
         mercadopago: gym.mercadoPago,
+        subscriptionEnd: gym.subscriptionEnd,
       }, {secret: JWT_SECRET})
       return { 
         name: gym.name,
@@ -85,7 +92,8 @@ export class GymsService {
         openHours: gym.openHours,
         closeHours: gym.closeHours,
         description: gym.description,
-        owner: gym.owner, 
+        owner: gym.owner,
+        subscriptionEnd: gym.subscriptionEnd, 
         gymToken: gymToken 
       };
     } catch (error) {
@@ -97,6 +105,11 @@ export class GymsService {
     const decodedUser = this.jwtService.decode(token);
     const owner = decodedUser.id
     const decodedGym = this.jwtService.decode(gymToken);
+    const currentDate = new Date()
+    const subscriptionEndDate = new Date(decodedGym.subscriptionEnd)
+    if (subscriptionEndDate < currentDate) {
+      throw new BadRequestException('Your subscription has expired');
+    }
     const gymOwner = await this.gymsRepository.findById(decodedGym.id);
     if (gymOwner.owner !== owner) {
       throw new BadRequestException('You are not the owner of this gym');
@@ -112,6 +125,11 @@ export class GymsService {
   async update(gymToken: string, updateGymDto: UpdateGymDto) {
     try{
       const decodedGym = this.jwtService.decode(gymToken);
+      const currentDate = new Date()
+      const subscriptionEndDate = new Date(decodedGym.subscriptionEnd)
+      if (subscriptionEndDate < currentDate) {
+        throw new BadRequestException('Your subscription has expired');
+      }
       const id = decodedGym.gymId
       const gym = await this.gymsRepository.findById(id);
       if (!gym) {
@@ -231,5 +249,39 @@ export class GymsService {
     }
     return true
   }
+
+  async extendMembership(gymToken: string) {
+    // Decodificar token
+    
+    const decodedGym = this.jwtService.decode(gymToken);
+  
+    if (!decodedGym || !decodedGym.gymId) {
+      throw new UnauthorizedException('Token inválido');
+    }
+
+    const product = await this.gymMembershipService.findOne(decodedGym.productId);
+    
+    const days = product.duration;
+  
+    // Validar días
+    if (days <= 0) {
+      throw new BadRequestException('La cantidad de días debe ser mayor a 0');
+    }
+  
+    // Buscar gimnasio
+    const gym = await this.gymsRepository.findById(decodedGym.gymId);
+    if (!gym) {
+      throw new NotFoundException('Gimnasio no encontrado');
+    }
+  
+    // Actualizar suscripción
+    const currentDate = new Date(gym.subscriptionEnd || Date.now());
+    currentDate.setDate(currentDate.getDate() + days);
+    gym.subscriptionEnd = currentDate;
+  
+    // Guardar cambios
+    return await this.gymsRepository.update(gym.id, { subscriptionEnd: gym.subscriptionEnd });
+  }
+  
 
 }

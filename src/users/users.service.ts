@@ -108,7 +108,7 @@ export class UsersService {
     const user = await this.usersRepository.findOneById(decoded.clientId)
     
     const subscription = await this.subscriptionsService.findOne(decoded.productId);
-    console.log(subscription);
+
     const today = new Date()
     const futureDate = new Date(today)
     futureDate.setDate(today.getDate() + subscription.duration)
@@ -140,7 +140,8 @@ export class UsersService {
           gymId: newGym,
           freePass: false,
           admissions: 0,
-          subscriptionEnd: null
+          subscriptionEnd: null,
+          unlink: false
          })
         return removeGym
       }
@@ -154,7 +155,8 @@ export class UsersService {
           gymId: newGym,
           freePass: false,
           admissions: 0,
-          subscriptionEnd: null
+          subscriptionEnd: null,
+          unlink: true
          })
         return removeGym
     }
@@ -163,6 +165,7 @@ export class UsersService {
   async checkLogin(token: string, gymToken: string) {
     const decodedGym = this.jwtService.decode(gymToken);
     const decodedUser = this.jwtService.decode(token);
+
     // Comprobar si el decodedUser tiene un id válido
     if (!decodedUser || !decodedUser.id) {
       throw new Error("Usuario no válido o token inválido.");
@@ -176,12 +179,20 @@ export class UsersService {
     if (!user) {
       throw new Error("Usuario no encontrado.");
     }
+
+    // Si el slug del gimnasio es "default", asignar el gimnasio al usuario, y cambiar el estado de desvinculado
+    if(decodedGym.slug === 'default') {
+      await this.usersRepository.update(user.id, { gymId: decodedGym.id, unlink: false });
+      return true
+    }
   
     // Verificar si el usuario ya tiene un gimnasio asignado
-    if (user.gymId === null) {
+    if (user.gymId === null && user.unlink === false) {
       // Asignar el gimnasio al usuario si no tiene uno
       await this.usersRepository.update(user.id, { gymId: decodedGym.id });
       return true;
+    } else if (user.gymId === null && user.unlink === true) {
+      return { slug : 'default' }
     }
   
     // Si el usuario ya tiene un gimnasio, verificar si coincide con el gimnasio recibido

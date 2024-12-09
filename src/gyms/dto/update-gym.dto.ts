@@ -32,4 +32,8 @@ export class UpdateGymDto extends PartialType(CreateGymDto) {
 
     @ApiProperty({ example: '82474-234709-82374239-8234' })
     mercadoPago?: string
+
+    // Agregar la propiedad subscriptionEnd aquí
+    @ApiProperty({ example: '2024-12-05' })
+    subscriptionEnd: Date; // Asegúrate de definir esta propiedad
 }

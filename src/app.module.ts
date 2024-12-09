@@ -7,6 +7,7 @@ import { JWT_SECRET } from './config/env.config';
 import { UsersModule } from './users/users.module';
 import { CommunicationsModule } from './communications/communications.module';
 import { SuscriptionsModule } from './suscriptions/suscriptions.module';
+import { GymMembershipModule } from './gym-membership/gym-membership.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { SuscriptionsModule } from './suscriptions/suscriptions.module';
     UsersModule,
     CommunicationsModule,
     SuscriptionsModule,
+    GymMembershipModule,
   ],
   controllers: [],
   providers: [],

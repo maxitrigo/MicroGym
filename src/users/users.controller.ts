@@ -21,7 +21,6 @@ export class UsersController {
   @UseGuards(AdminGuard)
   updateSubscription(@Headers('authorization') authHeader: string ) {
     const token = authHeader.split(' ')[1];
-    console.log(token);
     return this.usersService.updateSubscription(token);
   }
 

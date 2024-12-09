@@ -19,7 +19,16 @@ export class GymsController {
     const token = authHeader.split(' ')[1];
     return this.gymsService.create(token, createGymDto);
   }
-
+  
+  @Post('/extend-subscription')
+  @UseGuards(AdminGuard)
+  async extendSubscription(
+    @Headers('authorization') authHeader: string,
+  ) {
+    const gymToken = authHeader.split(' ')[1];
+    return this.gymsService.extendMembership(gymToken);
+  }
+  
   @Post('checkOwnership')
   @UseGuards(AdminGuard)
   checkOwnership(@Body('gymToken') gymToken: string,@Headers('authorization') authHeader: string) {
@@ -29,8 +38,9 @@ export class GymsController {
 
   @Get(':slug')
   @UseGuards(AuthGuard)
-  findOne(@Param('slug') slug: string) {
-    return this.gymsService.findBySlug(slug);
+  findOne(@Param('slug') slug: string, @Headers('authorization') authHeader: string) {
+    const token = authHeader.split(' ')[1];
+    return this.gymsService.findBySlug(slug, token);
   }
 
   @Get()
@@ -58,6 +68,7 @@ export class GymsController {
   update(@Param('gymToken') gymToken: string, @Body() updateGymDto: UpdateGymDto) {
     return this.gymsService.update(gymToken, updateGymDto);
   }
+
 
   @Delete(':gymToken')
   @UseGuards(AdminGuard)

@@ -10,4 +10,5 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
     subscriptionEnd?: Date
     status?: string
     gymId?: string;
+    unlink?: boolean
 }
