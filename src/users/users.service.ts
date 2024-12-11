@@ -224,7 +224,7 @@ export class UsersService {
       await this.usersRepository.delete(user.id);
   
       // Realizar la solicitud para eliminar la autenticación del usuario
-      await axios.delete('http://localhost:3001/auth/delete', {
+      await axios.delete('http://18.231.148.87:3001/auth/delete', {
         headers: { Authorization: `Bearer ${token}` },
         data: { email: decoded.email },
       });

@@ -33,7 +33,7 @@ export class GymsService {
       const patchRole = this.jwtService.sign({
         role: Roles.Admin
       }, {secret: JWT_SECRET})
-      const response = await axios.patch('http://localhost:3001/auth/role', 
+      const response = await axios.patch('http://18.231.148.87:3001/auth/role', 
         {
           email: decodedUser.email,
           role: Roles.Admin
@@ -153,7 +153,7 @@ export class GymsService {
       // Desvincular a los usuarios del gimnasio antes de eliminarlo
       await this.usersService.unlinkUsersFromGym(id);
       await this.gymsRepository.remove(id);
-      await axios.delete('http://localhost:3001/auth/delete', {
+      await axios.delete('http://18.231.148.87:3001/auth/delete', {
         headers: { Authorization: `Bearer ${token}` },
         data: { email: decoded.email } // Aquí va el cuerpo de la solicitud
       });
@@ -174,7 +174,7 @@ export class GymsService {
       }
 
       // Obtener transacciones del gimnasio
-      const transactionsResponse = await axios.get(`http://localhost:3000/transactions/${gymToken}`, {
+      const transactionsResponse = await axios.get(`http://54.232.249.232/transactions/${gymToken}`, {
           headers: { 'Authorization': `Bearer ${token}` },
       });
 
