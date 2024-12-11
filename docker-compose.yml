@@ -10,7 +10,7 @@ services:
     command: npm run start:prod
     restart: always
 
-  PAYMENTSDB:
+  micro_gym:
     image: postgres:latest
     env_file:
       - .env
