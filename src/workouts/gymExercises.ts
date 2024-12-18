@@ -1,16 +1,16 @@
 const gymExercises = {
     pecho: [
-        { name: 'Press de banca, agarre cerrado', variations: ['barra'] },
-        { name: 'Press de banca, agarre amplio', variations: ['barra', 'mancuernas'] },
-        { name: 'Aperturas con mancuernas', variations: ['planas', 'inclinadas'] },
-        { name: 'Press inclinado', variations: ['barra', 'mancuernas'] },
-        { name: 'Flexiones', variations: ['normales', 'diamante', 'arquero'] },
-        { name: 'Hex Press', variations: ['mancuernas'] },
-        { name: 'Pull-over', variations: ['mancuernas', 'polea'] },
-        { name: 'Fondos en paralelas', variations: [] },
-        { name: 'Press declinado', variations: ['barra', 'mancuernas'] },
-        { name: 'Cruces con polea alta', variations: [] },
-        { name: 'Peck Deck', variations: [] }
+        { name: 'Press de banca, agarre cerrado', variations: ['barra'], video: 'https://c.tenor.com/vsNKHqAvOKoAAAAd/tenor.gif' },
+        { name: 'Press de banca, agarre amplio', variations: ['barra', 'mancuernas'], video: 'https://c.tenor.com/vsNKHqAvOKoAAAAd/tenor.gif' },
+        { name: 'Aperturas con mancuernas', variations: ['planas', 'inclinadas'], video: 'https://c.tenor.com/aeiQWNFbCL8AAAAd/tenor.gif' },
+        { name: 'Press inclinado', variations: ['barra', 'mancuernas'], video: 'https://c.tenor.com/2PdWlCSxHh4AAAAd/tenor.gif' },
+        { name: 'Flexiones', variations: ['normales', 'diamante', 'arquero'], video: 'https://c.tenor.com/p5VGilBlRKIAAAAd/tenor.gif' },
+        { name: 'Hex Press', variations: ['mancuernas'], video: '' },
+        { name: 'Pull-over', variations: ['mancuernas', 'polea'], video: '' },
+        { name: 'Fondos en paralelas', variations: [], video: '' },
+        { name: 'Press declinado', variations: ['barra', 'mancuernas'], video: '' },
+        { name: 'Cruces con polea alta', variations: [], video: '' },
+        { name: 'Peck Deck', variations: [], video: '' }
     ],
     espalda: [
         { name: 'Dominadas', variations: ['agarre supino', 'agarre prono', 'agarre neutro'] },
