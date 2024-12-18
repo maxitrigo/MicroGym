@@ -7,8 +7,6 @@ import bodyweightExercises from './bodyweightExercises';
 import warmUpExercises from './warmupExercises';
 import { WorkoutsRepository } from './workouts.repository';
 import { JwtService } from '@nestjs/jwt';
-import axios from 'axios';
-import { CreateWorkoutDto } from './dto/create-workout.dto';
 
 @Injectable()
 export class WorkoutsService {
@@ -120,6 +118,7 @@ export class WorkoutsService {
           .slice(0, groupExerciseCount)
           .map(exercise => ({
             name: exercise.name,
+            video: exercise.video,
             variations: exercise.variations[Math.floor(Math.random() * exercise.variations.length)],
             sets: goalConfig.sets[Math.floor(Math.random() * goalConfig.sets.length)],
             reps: goalConfig.reps[Math.floor(Math.random() * goalConfig.reps.length)],
