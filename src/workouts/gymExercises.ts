@@ -5,23 +5,23 @@ const gymExercises = {
         { name: 'Aperturas con mancuernas', variations: ['planas', 'inclinadas'], video: 'https://c.tenor.com/aeiQWNFbCL8AAAAd/tenor.gif' },
         { name: 'Press inclinado', variations: ['barra', 'mancuernas'], video: 'https://c.tenor.com/2PdWlCSxHh4AAAAd/tenor.gif' },
         { name: 'Flexiones', variations: ['normales', 'diamante', 'arquero'], video: 'https://c.tenor.com/p5VGilBlRKIAAAAd/tenor.gif' },
-        { name: 'Hex Press', variations: ['mancuernas'], video: '' },
-        { name: 'Pull-over', variations: ['mancuernas', 'polea'], video: '' },
-        { name: 'Fondos en paralelas', variations: [], video: '' },
-        { name: 'Press declinado', variations: ['barra', 'mancuernas'], video: '' },
-        { name: 'Cruces con polea alta', variations: [], video: '' },
-        { name: 'Peck Deck', variations: [], video: '' }
+        { name: 'Hex Press', variations: ['mancuernas'], video: 'https://c.tenor.com/Vhhf9PFyFSwAAAAd/tenor.gif' },
+        { name: 'Pull-over', variations: ['mancuernas', 'polea'], video: 'https://c.tenor.com/iKKHtdZ2QwUAAAAd/tenor.gif' },
+        { name: 'Fondos en paralelas', variations: [], video: 'https://c.tenor.com/7qFqk839s9wAAAAd/tenor.gif' },
+        { name: 'Press declinado', variations: ['barra', 'mancuernas'], video: 'https://c.tenor.com/OgjLzf5LkqAAAAAd/tenor.gif' },
+        { name: 'Cruces con polea alta', variations: [], video: 'https://c.tenor.com/p-__t8FMTtoAAAAd/tenor.gif' },
+        { name: 'Peck Deck', variations: ['unilateral'], video: 'https://c.tenor.com/0-pLwbiwkhcAAAAd/tenor.gif' }
     ],
     espalda: [
-        { name: 'Dominadas', variations: ['agarre supino', 'agarre prono', 'agarre neutro'] },
-        { name: 'Remo con barra inclinado', variations: ['agarre prono', 'supino'] },
-        { name: 'Remo en máquina', variations: ['unilateral', 'bilateral'] },
-        { name: 'Polea al pecho, agarre amplio', variations: ['agarre prono', 'supino'] },
-        { name: 'Polea al pecho, agarre cerrado', variations: ['agarre prono', 'supino'] },
-        { name: 'Face pulls', variations: ['con cuerda', 'con barra'] },
-        { name: 'Remo con mancuernas (serrucho)', variations: ['a una mano'] },
-        { name: 'Remo invertido', variations: ['con barra', 'con TRX'] },
-        { name: 'Remo en plancha unilateral', variations: ['mancuernas'] }
+        { name: 'Dominadas', variations: ['agarre supino', 'agarre prono', 'agarre neutro'], video: 'https://c.tenor.com/1sdrlkYXVsUAAAAd/tenor.gif' },
+        { name: 'Remo con barra inclinado', variations: ['agarre prono', 'supino'], video: 'https://c.tenor.com/-Z-hLGN30WAAAAAd/tenor.gif' },
+        { name: 'Remo en máquina', variations: ['unilateral', 'bilateral'], video: 'https://c.tenor.com/R069mkP-46sAAAAd/tenor.gif' },
+        { name: 'Polea al pecho, agarre amplio', variations: ['agarre prono', 'supino'], video: 'https://c.tenor.com/AR6A1jMcnE8AAAAd/tenor.gif' },
+        { name: 'Polea al pecho, agarre cerrado', variations: ['agarre prono', 'supino'], video: 'https://c.tenor.com/hI6Koi1EXhcAAAAd/tenor.gif' },
+        { name: 'Face pulls', variations: ['con cuerda', 'con barra'], video: 'https://c.tenor.com/FGsBtkQCchwAAAAd/tenor.gif' },
+        { name: 'Remo con mancuernas (serrucho)', variations: ['a una mano'], video: 'https://c.tenor.com/h_qAMNH5HJQAAAAd/tenor.gif' },
+        { name: 'Remo invertido', variations: ['con barra', 'con TRX'], video: 'https://c.tenor.com/mUGlCgqdD7oAAAAd/tenor.gif' },
+        { name: 'Renegade rows', variations: ['mancuernas'], video: 'https://c.tenor.com/HAiTm4qjrqUAAAAd/tenor.gif' }
     ],
     hombros: [
         { name: 'Press militar', variations: ['barra', 'mancuernas'] },
