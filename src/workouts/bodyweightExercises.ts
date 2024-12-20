@@ -18,6 +18,7 @@ const bodyweightExercises = {
         { name: 'Hip Thrusts', variations: [], video: 'https://i.pinimg.com/originals/d9/39/4e/d9394ef52db468c3891a51a00ab6ea69.gif' },
         { name: 'Side Plank', variations: ['con elevación de cadera', 'con rotación'], video: 'https://64.media.tumblr.com/3aab8e0ac69b68037016d87943826c12/tumblr_nv76ntW6kE1re9gg7o1_1280.gifv' },
         { name: 'Bear Crawls', variations: [], video: 'https://hips.hearstapps.com/hmg-prod/images/workouts/2016/08/bearcrawlinplace-1472057021.gif' },
+        { name: 'Sit-ups', variations: [], minLevel: 'principiante', video: 'https://downloads.ctfassets.net/6ilvqec50fal/7EclbKjErS5Won9rpnOQ4q/5bdec6988da9a730667f337fa5da461f/How-to-do-a-sit-up-GIF.gif' },
     ],
 };
 
