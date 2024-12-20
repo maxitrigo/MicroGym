@@ -18,6 +18,7 @@ export class Workout {
     day: number;
     dailyPlan: {
       name: string;
+      video: string;
       variations?: string;
       sets?: number;
       reps?: number;

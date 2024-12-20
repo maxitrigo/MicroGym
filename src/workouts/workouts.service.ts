@@ -322,6 +322,7 @@ export class WorkoutsService {
             warmUp: warmUp,
             exercises: selectedExercises.map(exercise => ({
                 name: exercise.name,
+                video: exercise.video,
                 variation: exercise.variations.length > 0
                     ? exercise.variations[Math.floor(Math.random() * exercise.variations.length)]
                     : null,
@@ -353,6 +354,7 @@ export class WorkoutsService {
       // Crear plan de calentamiento
       const warmUpPlan = selectedExercises.map(exercise => ({
           name: exercise.name,
+          video: exercise.video,
           variation: exercise.variations.length > 0
               ? exercise.variations[Math.floor(Math.random() * exercise.variations.length)]
               : null,
