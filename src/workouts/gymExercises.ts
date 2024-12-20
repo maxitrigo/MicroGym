@@ -49,7 +49,7 @@ const gymExercises = {
         { name: 'Extensiones de tríceps en polea sobre cabeza', variations: ['con cuerda', 'barra'], video: 'https://c.tenor.com/jm6GUnNRbEcAAAAd/tenor.gif' },
         { name: 'Extensión con mancuernas', variations: ['de pie', 'sentado'], video: 'https://c.tenor.com/V_ypUCAmBUgAAAAd/tenor.gif' },
         { name: 'Patada de tríceps', variations: ['con mancuernas'], video: 'https://c.tenor.com/UchKCbffFNEAAAAd/tenor.gif' },
-        { name: 'Fondos entre bancos', variations: [], video: 'https://c.tenor.com/6zLmQ1C_33YAAAAd/tenor.gif' },
+        { name: 'Fondos en banco', variations: [], video: 'https://c.tenor.com/6zLmQ1C_33YAAAAd/tenor.gif' },
         { name: 'Extensión de tríceps en polea', variations: ['con cuerda', 'con barra'], video: 'https://c.tenor.com/Kj3K10KHPGgAAAAd/tenor.gif' },
         { name: 'Rompecráneos', variations: ['con barra', 'con mancuernas'], video: 'https://c.tenor.com/y_Z2oZ35sP8AAAAd/tenor.gif' },
         { name: 'Push-ups de tríceps', variations: ['normales', 'con manos juntas'], video: 'https://c.tenor.com/_lw152SU9i8AAAAd/tenor.gif' }
