@@ -42,8 +42,8 @@ const warmUpExercises = {
         },
         {
             name: 'Lunges dinámicos',
-            variations: ['Con rotación de tronco', 'Con salto'],
-            video: 'https://media.foodspring.com/magazine/public/uploads/2020/11/Deep-Lunge-Shoulder-Rotation.gif'
+            variations: ['Con salto'],
+            video: 'https://media.post.rvohealth.io/wp-content/uploads/sites/2/2016/07/Split-lunge-jump.gif'
         },
         {
             name: 'Mountain Climbers',
