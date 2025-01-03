@@ -18,9 +18,6 @@ export class UsersService {
   async create(gymToken: string, token: string) {
     const decodedUser = this.jwtService.decode(token);
     const decodedGym = this.jwtService.decode(gymToken);
-    console.log(decodedGym);
-    
-    
     const user = await this.usersRepository.create(decodedUser.id, decodedUser.name, decodedGym.id);
     return user
   }
@@ -38,6 +35,46 @@ export class UsersService {
   async update(token: string, updateUserDto: UpdateUserDto) {
     const decoded = this.jwtService.decode(token);
     return this.usersRepository.update(decoded.id, updateUserDto);
+  }
+
+  async updateAdmissions(reservation: any, token: string) {
+    const decoded = this.jwtService.decode(token);
+    
+    const user = await this.usersRepository.findOneById(decoded.id);
+    
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    if (user.freePass) {
+      const response = await axios.post('http://localhost:3000/reservations', reservation, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return response.data
+    }
+    if (user.admissions <= 0) {
+      throw new Error('No tienes admisiones disponibles');
+    }
+    const response = await axios.post('http://localhost:3000/reservations', reservation, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    
+    if (!response.data) {
+      throw new Error('Error al realizar la reserva');
+    }
+    user.admissions -= 1;
+    await this.usersRepository.update(decoded.id, { admissions: user.admissions });
+    return user
+  }
+
+  async cancelReservation(token: string) {
+    const decoded = this.jwtService.decode(token);
+    const user = await this.usersRepository.findOneById(decoded.id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    user.admissions += 1;
+    await this.usersRepository.update(decoded.id, { admissions: user.admissions });
+    return user
   }
 
   async logTrain(token: string) {

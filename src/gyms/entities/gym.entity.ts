@@ -44,9 +44,9 @@ export class Gym {
     image: string;
 
     @Column({
-        nullable: true
+        default: false
     })
-    description: string;
+    reservations: boolean;
 
     @Column({
         nullable: true

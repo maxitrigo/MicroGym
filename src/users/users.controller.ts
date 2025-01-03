@@ -17,6 +17,20 @@ export class UsersController {
     return this.usersService.create(gymToken, token);
   }
 
+  @Post('reservations')
+  @UseGuards(AuthGuard)
+  updateAdmissions(@Body() reservation , @Headers('authorization') authHeader: string ) {
+    const token = authHeader.split(' ')[1];
+    return this.usersService.updateAdmissions(reservation, token);
+  }
+
+  @Post('cancel-reservations')
+  @UseGuards(AuthGuard)
+  cancelReservations(@Headers('authorization') authHeader: string ) {
+    const token = authHeader.split(' ')[1];
+    return this.usersService.cancelReservation(token);
+  }
+
   @Post('update-subscription')
   @UseGuards(AdminGuard)
   updateSubscription(@Headers('authorization') authHeader: string ) {

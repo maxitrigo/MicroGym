@@ -91,7 +91,7 @@ export class GymsService {
         image: gym.image,
         openHours: gym.openHours,
         closeHours: gym.closeHours,
-        description: gym.description,
+        reservations: gym.reservations,
         owner: gym.owner,
         subscriptionEnd: gym.subscriptionEnd, 
         gymToken: gymToken 
