@@ -46,7 +46,7 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
     if (user.freePass) {
-      const response = await axios.post('http://localhost:3000/reservations', reservation, {
+      const response = await axios.post('https://res.gym-metrics.com/reservations', reservation, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data
@@ -54,7 +54,7 @@ export class UsersService {
     if (user.admissions <= 0) {
       throw new Error('No tienes admisiones disponibles');
     }
-    const response = await axios.post('http://localhost:3000/reservations', reservation, {
+    const response = await axios.post('https://res.gym-metrics.com/reservations', reservation, {
       headers: { Authorization: `Bearer ${token}` },
     });
     

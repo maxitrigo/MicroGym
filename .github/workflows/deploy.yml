@@ -58,7 +58,7 @@ jobs:
             echo "ir a la carpeta raiz"
             cd microgym
 
-            # Guardar el archivo .env en la carpeta yochambeoback
+            # Guardar el archivo .env en la carpeta microgym
             echo "${{ secrets.ENV_FILE }}" > ~/microgym/.env
 
             echo "Deteniendo dockers activos..."
