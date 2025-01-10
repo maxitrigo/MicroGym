@@ -72,6 +72,9 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
+    if (user.freePass) {
+      return user
+    }
     user.admissions += 1;
     await this.usersRepository.update(decoded.id, { admissions: user.admissions });
     return user
