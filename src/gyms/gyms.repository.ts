@@ -24,7 +24,7 @@ export class GymsRepository {
     }
 
     async findUsersByGymId(gymId: string): Promise<Gym> {
-        return await this.gymsRepository.findOne({ where: { id: gymId }, relations: ['users', 'users.wokouts'] });
+        return await this.gymsRepository.findOne({ where: { id: gymId }, relations: ['users'] });
     }
 
     async create(owner: string, gym: CreateGymDto): Promise<Gym> {
