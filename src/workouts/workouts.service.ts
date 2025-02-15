@@ -369,14 +369,18 @@ export class WorkoutsService {
   async saveWorkout(workout, token) {
     try {
       const decoded = this.jwtService.decode(token);
-      const userId = decoded.id;
-      const newWorkout = {
-        ...workout,
-        user: userId
+      if(decoded.role === 'admin'){
+        return await this.workoutsRepository.create(workout);
+      } else {
+        const userId = decoded.id;
+        const newWorkout = {
+          ...workout,
+          user: userId
+        }
+        return await this.workoutsRepository.create(newWorkout);
       }
-      return await this.workoutsRepository.create(newWorkout);
     } catch (error) {
-      
+      console.log(error);
     }
   }
 
